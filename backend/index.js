@@ -1,9 +1,12 @@
 import express from 'express'
 import mongoose from 'mongoose';
 import dotenv from 'dotenv'
-import userRoute from './routes/userRoute';
+import userRoute from './routes/userRoute.js';
+import userAuth from './controllers/signupController.js';
 dotenv.config();
 const app = express();
+
+app.use(express.json())
 
 mongoose.connect(process.env.MONGO_URI).then(()=>{
     console.log('mongoDB is connected');
@@ -19,3 +22,4 @@ app.listen(PORT, ()=>{
 })
 
 app.use('/api/user', userRoute);
+app.use('/api/auth', userAuth)
