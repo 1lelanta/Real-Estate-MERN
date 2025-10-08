@@ -11,10 +11,10 @@ const SignUp = () => {
         <input type="password" placeholder='password' className='border p-3 rounded-lg' id='password'/>
         <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacit-95 disabled:opacity-95'>Sign Up</button>
       </form>
-      <div>
+      <div className='flex'>
         <p>Have an account ?</p>
         <Link to={"/sign-in"}>
-        <span className='text-blue-700'>Sign In</span></Link>
+        <span className='text-blue-700 gap-2 mt-5'>Sign In</span></Link>
       </div>
     </div>
   )
