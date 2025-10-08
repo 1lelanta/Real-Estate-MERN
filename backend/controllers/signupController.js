@@ -9,7 +9,7 @@ const signup = async(req,res, next)=>{
 
     try {
         await newUser.save();
-        res.status(200).json('user created successfully');
+        res.status(201).json('user created successfully');
     } catch (error) {
         next(errorHandler(550, 'error from the function'));
     }
