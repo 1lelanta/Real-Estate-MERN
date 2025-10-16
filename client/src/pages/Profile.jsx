@@ -1,9 +1,12 @@
 import React from 'react'
 import { useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { updateUserfailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice'
 
 export default function Profile() {
   const fileRef = useRef(null)
+  const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user)
   const [formData, setFormData] = useState({
     username: currentUser.username,
@@ -17,12 +20,26 @@ export default function Profile() {
       [e.target.id]: e.target.value,
     })
   }
-  const handleSubmit = (e)=>{
+  const handleSubmit = async(e)=>{
     e.preventDefault();
     try {
-      
+      dispatch(updateUserStart())
+      const res = await fetch(`/api/user/update/${currentUser._id}`,{
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify(formData)
+      })
+      const data = await res.json()
+      if(data.success===false){
+        dispatch(updateUserfailure(data.message))
+        return
+      }
+      dispatch(updateUserSuccess(data))
+
     } catch (error) {
-      
+      dispatch(updateUserfailure(error.message))
     }
   }
 
