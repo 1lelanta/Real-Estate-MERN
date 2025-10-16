@@ -5,8 +5,8 @@ import { updateUserfailure, updateUserStart, updateUserSuccess } from '../redux/
 export default function Profile() {
   const fileRef = useRef(null)
   const dispatch = useDispatch()
-  const {updateSuccess,setUpdateSuccess} = useState(false)
-  const { currentUser,loading,error } = useSelector((state) => state.user)
+  const [updateSuccess, setUpdateSuccess] = useState(false)
+  const { currentUser, loading, error } = useSelector((state) => state.user)
 
   const [formData, setFormData] = useState({
     username: currentUser.username,
@@ -27,11 +27,11 @@ export default function Profile() {
       dispatch(updateUserStart())
 
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: 'PUT', // ✅ match your backend
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // ✅ important for cookie/JWT auth
+        credentials: 'include',
         body: JSON.stringify(formData),
       })
 
@@ -55,7 +55,7 @@ export default function Profile() {
 
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <input type='file' ref={fileRef} hidden accept='image/*' />
-        
+
         <img
           onClick={() => fileRef.current.click()}
           className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
@@ -90,11 +90,12 @@ export default function Profile() {
           onChange={handleChange}
         />
 
-        <button disabled={loading}
+        <button
+          disabled={loading}
           type='submit'
           className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'
         >
-          {loading?'Loading...': 'update'}
+          {loading ? 'Loading...' : 'Update'}
         </button>
       </form>
 
@@ -102,8 +103,11 @@ export default function Profile() {
         <span className='text-red-700 cursor-pointer'>Delete Account</span>
         <span className='text-red-700 cursor-pointer'>Sign Out</span>
       </div>
-      <p className='text-red-700 mt-5'>{error?error:''}</p>
-      <p className='text-green-700 mt-5'>{updateSuccess?'user is update successfully':''}</p>
+
+      <p className='text-red-700 mt-5'>{error ? error : ''}</p>
+      <p className='text-green-700 mt-5'>
+        {updateSuccess ? 'User updated successfully!' : ''}
+      </p>
     </div>
   )
 }
