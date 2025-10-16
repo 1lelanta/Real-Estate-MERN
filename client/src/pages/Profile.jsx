@@ -1,13 +1,13 @@
-import React from 'react'
-import { useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { useDispatch } from 'react-redux'
+import React, { useRef, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { updateUserfailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice'
 
 export default function Profile() {
   const fileRef = useRef(null)
-  const dispatch = useDispatch();
-  const { currentUser } = useSelector((state) => state.user)
+  const dispatch = useDispatch()
+  const {updateSuccess,setUpdateSuccess} = useState(false)
+  const { currentUser,loading,error } = useSelector((state) => state.user)
+
   const [formData, setFormData] = useState({
     username: currentUser.username,
     email: currentUser.email,
@@ -20,24 +20,30 @@ export default function Profile() {
       [e.target.id]: e.target.value,
     })
   }
-  const handleSubmit = async(e)=>{
-    e.preventDefault();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     try {
       dispatch(updateUserStart())
-      const res = await fetch(`/api/user/update/${currentUser._id}`,{
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json'
+
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: 'PUT', // ✅ match your backend
+        headers: {
+          'Content-Type': 'application/json',
         },
-        body:JSON.stringify(formData)
+        credentials: 'include', // ✅ important for cookie/JWT auth
+        body: JSON.stringify(formData),
       })
+
       const data = await res.json()
-      if(data.success===false){
+
+      if (data.success === false) {
         dispatch(updateUserfailure(data.message))
         return
       }
-      dispatch(updateUserSuccess(data))
 
+      dispatch(updateUserSuccess(data))
+      setUpdateSuccess(true)
     } catch (error) {
       dispatch(updateUserfailure(error.message))
     }
@@ -46,8 +52,10 @@ export default function Profile() {
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
+
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <input type='file' ref={fileRef} hidden accept='image/*' />
+        
         <img
           onClick={() => fileRef.current.click()}
           className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
@@ -57,7 +65,7 @@ export default function Profile() {
 
         <input
           type='text'
-          placeholder='username'
+          placeholder='Username'
           id='username'
           value={formData.username}
           className='border p-3 rounded-lg'
@@ -65,8 +73,8 @@ export default function Profile() {
         />
 
         <input
-          type='text'
-          placeholder='email'
+          type='email'
+          placeholder='Email'
           id='email'
           value={formData.email}
           className='border p-3 rounded-lg'
@@ -75,17 +83,18 @@ export default function Profile() {
 
         <input
           type='password'
-          placeholder='password'
+          placeholder='Password'
           id='password'
           value={formData.password}
           className='border p-3 rounded-lg'
           onChange={handleChange}
         />
 
-        <button
+        <button disabled={loading}
+          type='submit'
           className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'
         >
-          Update
+          {loading?'Loading...': 'update'}
         </button>
       </form>
 
@@ -93,6 +102,8 @@ export default function Profile() {
         <span className='text-red-700 cursor-pointer'>Delete Account</span>
         <span className='text-red-700 cursor-pointer'>Sign Out</span>
       </div>
+      <p className='text-red-700 mt-5'>{error?error:''}</p>
+      <p className='text-green-700 mt-5'>{updateSuccess?'user is update successfully':''}</p>
     </div>
   )
 }

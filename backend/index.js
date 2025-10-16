@@ -9,7 +9,11 @@ import cookieParser from 'cookie-parser';
 dotenv.config()
 const app = express()
 
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:5173', // your React app URL
+  credentials: true, // ✅ allow cookies / tokens to be sent
+}))
+
 app.use(express.json())
 app.use(cookieParser())
 
