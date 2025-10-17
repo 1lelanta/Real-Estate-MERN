@@ -11,8 +11,8 @@ dotenv.config()
 const app = express()
 
 app.use(cors({
-  origin: 'http://localhost:5173', // your React app URL
-  credentials: true, // ✅ allow cookies / tokens to be sent
+  origin: 'http://localhost:5173', 
+  credentials: true, 
 }))
 
 app.use(express.json())
