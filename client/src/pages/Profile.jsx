@@ -72,7 +72,7 @@ export default function Profile() {
 
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <input type='file' ref={fileRef} hidden accept='image/*' />
-
+      
         <img
           onClick={() => fileRef.current.click()}
           className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
