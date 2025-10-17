@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import userRoute from './routes/userRoute.js'
 import authRoute from './routes/signupUser.js'
 import cookieParser from 'cookie-parser';
+import listingRouter from './routes/listingRoute.js'
 
 dotenv.config()
 const app = express()
@@ -26,6 +27,7 @@ app.listen(PORT, () => console.log(`server is running on http://localhost:${PORT
 
 app.use('/api/user', userRoute)
 app.use('/api/auth', authRoute)
+app.use('/api/listing',listingRouter);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500
