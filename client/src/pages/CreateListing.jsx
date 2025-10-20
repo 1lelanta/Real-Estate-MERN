@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { supabase } from "../supabase.js";
 import { useSelector } from "react-redux";
+import {useNavigate} from 'react-router-dom';
 
 const CreateListing = () => {
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [files, setFiles] = useState([]);
   const [error, setError] = useState(false);
@@ -90,27 +92,43 @@ const CreateListing = () => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(false);
+  e.preventDefault();
+  setLoading(true);
+  setError(false);
 
-    try {
-      const res = await fetch("/api/listing/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, userRef: currentUser?._id, imageUrls: uploadedImages }),
-      });
+  try {
+    if (formData.regularPrice < formData.discountPrice)
+      return setError("Discount price must be less than regular price");
 
-      const data = await res.json();
-      setLoading(false);
+    const res = await fetch("/api/listing/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...formData,
+        userRef: currentUser?._id,
+        imageUrls: uploadedImages,
+      }),
+    });
 
-      if (data.success === "false") setError(data.message);
-      else alert("Listing created successfully!");
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
+    console.log("Response status:", res.status);
+    const data = await res.json();
+    console.log("Backend response:", data);
+
+    setLoading(false);
+
+    if (!res.ok) {
+      setError(data.message || "Something went wrong");
+      return;
     }
-  };
+
+    navigate(`/listing/${data._id}`); // ✅ should work
+  } catch (err) {
+    console.error("Submit error:", err);
+    setError(err.message);
+    setLoading(false);
+  }
+};
+
 
   return (
     <main className="p-3 max-w-4xl mx-auto gap-4">
@@ -191,13 +209,18 @@ const CreateListing = () => {
                 <span className="text-xs">($ / month)</span>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+
+            {formData.offer && (
+                <div className="flex items-center gap-2">
               <input type="number" id="discountPrice" min={0} className="p-3 border border-gray-500 rounded-lg" value={formData.discountPrice} onChange={handleChange} />
               <div className="flex flex-col items-center">
                 <p>Discounted Price</p>
                 <span className="text-xs">($ / month)</span>
               </div>
-            </div>
+              </div>
+            )}
+            
+            
           </div>
         </div>
 
