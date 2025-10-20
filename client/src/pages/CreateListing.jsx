@@ -95,7 +95,7 @@ const CreateListing = () => {
     setError(false);
 
     try {
-      const res = await fetch("/api/listing/creat", {
+      const res = await fetch("/api/listing/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, userRef: currentUser?._id, imageUrls: uploadedImages }),
