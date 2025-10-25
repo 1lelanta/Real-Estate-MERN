@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "../supabase.js";
 import { useSelector } from "react-redux";
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 
-const CreateListing = () => {
+const updateListing = () => {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [files, setFiles] = useState([]);
@@ -11,6 +11,7 @@ const CreateListing = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const params = useParams();
   const [formData, setFormData] = useState({
     imageUrls: [],
     name: "",
@@ -25,6 +26,13 @@ const CreateListing = () => {
     parking: false,
     furnished: false,
   });
+
+  useEffect(()=>{
+    const fetchListing= async()=>{
+      const listingId = params.listingId
+    }
+    fetchListing()
+  },[])
 
   // Upload image to Supabase
   const storeImage = async (file) => {
@@ -132,7 +140,7 @@ const CreateListing = () => {
 
   return (
     <main className="p-3 max-w-4xl mx-auto gap-4">
-      <h1 className="text-3xl font-semibold text-center my-7">Create a Listing</h1>
+      <h1 className="text-3xl font-semibold text-center my-7">Update a Listing</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
         {/* Left Section */}
@@ -254,7 +262,7 @@ const CreateListing = () => {
           )}
 
           <button type="submit" className="p-3 bg-slate-700 text-white rounded-lg uppercase font-bold hover:opacity-95 disabled:opacity-80">
-            {loading ? "Creating..." : "Create Listing"}
+            {loading ? "Updating..." : "Update Listing"}
           </button>
           {error && <p className="text-red-700 text-sm">{error}</p>}
         </div>
@@ -263,4 +271,4 @@ const CreateListing = () => {
   );
 };
 
-export default CreateListing;
+export default updateListing;
