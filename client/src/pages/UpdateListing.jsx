@@ -3,7 +3,7 @@ import { supabase } from "../supabase.js";
 import { useSelector } from "react-redux";
 import {useNavigate, useParams} from 'react-router-dom';
 
-const updateListing = () => {
+const UpdateListing = () => {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state.user);
   const [files, setFiles] = useState([]);
@@ -30,6 +30,13 @@ const updateListing = () => {
   useEffect(()=>{
     const fetchListing= async()=>{
       const listingId = params.listingId
+      const res = await fetch(`/api/listing/get/${listingId}`);
+      const data = await res.json(res);
+      if(data.success===false){
+        console.log(data.message);
+        return
+      }
+      setFormData(data);
     }
     fetchListing()
   },[])
@@ -108,7 +115,7 @@ const updateListing = () => {
     if (formData.regularPrice < formData.discountPrice)
       return setError("Discount price must be less than regular price");
 
-    const res = await fetch("/api/listing/create", {
+    const res = await fetch(`/api/listing/update/${params.listingId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -271,4 +278,4 @@ const updateListing = () => {
   );
 };
 
-export default updateListing;
+export default UpdateListing;
